@@ -14,6 +14,17 @@ Modern development is evolving fast and so are the tools we use. Sometimes we ha
 4) Run `boo init` to create the configuration file
 5) Add `boo load` to your shell profile (e.g. `.bashrc`, `.zshrc`, etc.)
 
+## Usage
+
+```bash
+boo node # interactively select a version
+boo node 14.17.0 # sets the node version to 14.17.0
+boo node 14 # sets the node version to the latest 14.x version
+boo node -v # prints the current node version
+
+boo mvn 3.8.1 # sets the maven version to 3.8.1
+```
+
 ## Configuration
 
 👻 bo(o) will lookup the following locations for a configuration file, if not specified with the `-c` flag:
