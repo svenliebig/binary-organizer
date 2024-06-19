@@ -10,8 +10,10 @@ Modern development is evolving fast and so are the tools we use. Sometimes we ha
 
 1) Download the latest release from the [releases page](...)
 2) Extract the archive
-3) Move the binary to a location in your $PATH
-4) Run `boo init` to create the configuration file
+3) Create an alias to the `boo.sh` file in your shell profile (read more about 'why alias' [here](#faq)):
+  * e.g. `alias boo='. /path/to/boo.sh'`
+4) Run `boo init` to:
+  * create the configuration file
 5) Add `boo load` to your shell profile (e.g. `.bashrc`, `.zshrc`, etc.)
 
 ## Usage
@@ -36,3 +38,8 @@ boo mvn 3.8.1 # sets the maven version to 3.8.1
 ~/.boo.toml
 ```
 
+## FAQ
+
+### Why Alias?
+
+The reason why we need an alias for the execution, is the way shell scripts get executed. If you run a shell script, it will be executed in a subshell, which means that the script can't change the environment of the parent shell. That's why we need to source the script with the `.` command, which will execute the script in the current shell, and therefore can change the environment of the current shell. That's also the reason why we need a shell script in the first place, instead of using the go binary directly.
