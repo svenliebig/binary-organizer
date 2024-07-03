@@ -20,8 +20,11 @@ func Load() (Config, error) {
 		return Config{}, err
 	}
 
+	// TODO read from configuration file
 	return Config{
-		// TODO read from configuration file
 		BinaryRoot: path.Join(home, "workspace", "software"),
+		Defaults: map[string]string{
+			"node": "20",
+		},
 	}, nil
 }
