@@ -7,6 +7,7 @@ import (
 
 type Version interface {
 	String() string
+	Matches(Version) bool
 }
 
 type version struct {
@@ -49,4 +50,26 @@ func VersionFrom(s string) (Version, error) {
 
 func (v *version) String() string {
 	return v.major + "." + v.minor + "." + v.patch
+}
+
+func (v *version) Matches(other Version) bool {
+	otherVersion, ok := other.(*version)
+
+	if !ok {
+		return false
+	}
+
+	if v.major != otherVersion.major {
+		return false
+	}
+
+	if v.minor != otherVersion.minor && v.minor != "x" {
+		return false
+	}
+
+	if v.patch != otherVersion.patch && v.patch != "x" {
+		return false
+	}
+
+	return true
 }
