@@ -31,7 +31,7 @@ func pathFromValue(value string) *paths {
 	}
 
 	// TODO maybe we shouldn't sort
-	p.value = sort(r)
+	p.value = r
 
 	return p
 }
@@ -62,29 +62,29 @@ func (p *paths) remove(path string) {
 	p.value = r
 }
 
-func sort(s []string) []string {
-	if len(s) < 2 {
-		return s
-	}
-
-	swapped := true
-	for swapped {
-		swapped = false
-
-		v := &(s[0])
-		for i := 1; i < len(s); i++ {
-			c := &(s[i])
-
-			if len(*v) > len(*c) {
-				t := *v
-				*v = *c
-				*c = t
-				swapped = true
-			}
-
-			v = c
-		}
-	}
-
-	return s
-}
+// func sort(s []string) []string {
+// 	if len(s) < 2 {
+// 		return s
+// 	}
+//
+// 	swapped := true
+// 	for swapped {
+// 		swapped = false
+//
+// 		v := &(s[0])
+// 		for i := 1; i < len(s); i++ {
+// 			c := &(s[i])
+//
+// 			if len(*v) > len(*c) {
+// 				t := *v
+// 				*v = *c
+// 				*c = t
+// 				swapped = true
+// 			}
+//
+// 			v = c
+// 		}
+// 	}
+//
+// 	return s
+// }

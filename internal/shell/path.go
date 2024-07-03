@@ -31,12 +31,12 @@ type path struct {
 
 func NewPath() Path {
 	return path{
-		content: FromValue(os.Getenv("PATH")),
+		content: pathFromValue(os.Getenv("PATH")),
 	}
 }
 
 func (p path) Export() string {
-	s := p.content.Seq()
+	s := p.content.seq()
 	a, err := seq.Collect(s)
 
 	if err != nil {
@@ -49,7 +49,7 @@ func (p path) Export() string {
 func (p path) Find(m matcher) []string {
 	l, err := seq.Collect(
 		seq.Filter(
-			p.content.Seq(),
+			p.content.seq(),
 			func(s string) (bool, error) {
 				return m(s), nil
 			},
@@ -65,9 +65,9 @@ func (p path) Find(m matcher) []string {
 }
 
 func (p path) Add(path string) {
-	p.content.Add(path)
+	p.content.add(path)
 }
 
 func (p path) Remove(path string) {
-	p.content.Remove(path)
+	p.content.remove(path)
 }

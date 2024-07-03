@@ -66,7 +66,7 @@ func TestPathRemove(t *testing.T) {
 			t.Errorf("expected path to be removed, got %s", ex)
 		}
 
-		l, err := seq.Collect(p.(path).content.Seq())
+		l, err := seq.Collect(p.(path).content.seq())
 
 		if err != nil {
 			t.Errorf("unexpected error: %v", err)
@@ -92,7 +92,7 @@ func TestPathAdd(t *testing.T) {
 			t.Errorf("expected path to be added, got %s", ex)
 		}
 
-		l, err := seq.Collect(p.(path).content.Seq())
+		l, err := seq.Collect(p.(path).content.seq())
 
 		if err != nil {
 			t.Errorf("unexpected error: %v", err)
