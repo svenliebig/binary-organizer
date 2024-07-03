@@ -24,7 +24,7 @@ type Binary interface {
 
 	// checks if the given version of that binary is installed.
 	// if it is installed, it returns the path to the binary.
-	IsInstalled(context.Context, Version) (string, bool)
+	IsInstalled(context.Context, string, Version) (string, bool)
 }
 
 func Register(b Binary) {
