@@ -16,7 +16,7 @@ import (
 var initCmd = &cobra.Command{
 	Use:     "init",
 	Aliases: []string{"initialize"},
-	Short:   "Initializes 👻 bo(o) and set up your environment with the defaults.",
+	Short:   "Initializes 👻 bo(o) and set up your environment with the defaults",
 	Long: `Initializes 👻 bo(o) and set up your environment with the defaults, if
 you don't have a configuration file yet, it will create a configuration file
 in your ~/.config/boo directory. Then the configuration file will be used

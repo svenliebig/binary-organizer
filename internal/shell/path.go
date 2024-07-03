@@ -13,10 +13,13 @@ type matcher = func(string) bool
 type Path interface {
 	// collects all the path strings that match the given matcher.
 	Find(m matcher) []string
+
 	// removes the given path from the PATH variable, if it exists.
 	Remove(p string)
+
 	// add a path to the PATH variable.
 	Add(p string)
+
 	// creates a valid bash export statement for the PATH variable.
 	//
 	// example:

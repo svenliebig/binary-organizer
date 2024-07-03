@@ -21,10 +21,11 @@ func (n *binary) Matches(p string) (binaries.Version, bool) {
 
 	if len(matches) != 0 {
 		version := fmt.Sprintf("%s.%s.%s", matches[1], matches[2], matches[3])
-		opers := matches[4]
-		arch := matches[5]
 
-		fmt.Println(version, opers, arch)
+		// TODO maybe we should check for specific operating systems and architectures
+
+		// opers := matches[4]
+		// arch := matches[5]
 
 		v, err := binaries.VersionFrom(version)
 

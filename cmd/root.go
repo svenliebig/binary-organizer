@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"os"
 
+	_ "github.com/svenliebig/binary-organizer/internal/binaries/node"
+
 	"github.com/spf13/cobra"
 )
 

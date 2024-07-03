@@ -1,10 +1,13 @@
 package binaries
 
 import (
+	"errors"
 	"sync"
 
 	"context"
 )
+
+var ErrBinaryNotFound = errors.New("binary not found")
 
 var binaries []Binary
 var lock = sync.RWMutex{}
@@ -36,4 +39,17 @@ func All() []Binary {
 	defer lock.RUnlock()
 
 	return binaries
+}
+
+func Get(identifier string) (Binary, error) {
+	lock.RLock()
+	defer lock.RUnlock()
+
+	for _, b := range binaries {
+		if b.Identifier() == identifier {
+			return b, nil
+		}
+	}
+
+	return nil, ErrBinaryNotFound
 }
