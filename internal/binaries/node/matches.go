@@ -1,9 +1,11 @@
-package path
+package node
 
 import (
 	"fmt"
 	"regexp"
 	"strings"
+
+	"github.com/svenliebig/binary-organizer/internal/binaries"
 )
 
 var operatingSystems = []string{"darwin", "win", "linux"}
@@ -11,17 +13,10 @@ var architectures = map[string][]string{
 	"darwin": {"arm64", "x64"},
 }
 
-type NodeJS struct {
-	OS           string
-	Architecture string
-	Version      string
-}
+var FULL_VERSION_REGEX = fmt.Sprintf(`node-v(\d+)\.(\d+)\.(\d+)-(%s)-([\w\d]*)`, strings.Join(operatingSystems, "|"))
 
-func IsNodeJS(p string) (*NodeJS, bool) {
-
-	r := fmt.Sprintf(`node-v(\d+)\.(\d+)\.(\d+)-(%s)-([\w\d]*)`, strings.Join(operatingSystems, "|"))
-	regexp := regexp.MustCompile(r)
-
+func (n *binary) Matches(p string) (binaries.Version, bool) {
+	regexp := regexp.MustCompile(FULL_VERSION_REGEX)
 	matches := regexp.FindStringSubmatch(p)
 
 	if len(matches) != 0 {
@@ -31,11 +26,13 @@ func IsNodeJS(p string) (*NodeJS, bool) {
 
 		fmt.Println(version, opers, arch)
 
-		return &NodeJS{
-			OS:           opers,
-			Architecture: "x64",
-			Version:      version,
-		}, true
+		v, err := binaries.VersionFrom(version)
+
+		if err != nil {
+			return nil, false
+		}
+
+		return v, true
 	}
 
 	return nil, false

@@ -14,7 +14,7 @@ type Binary interface {
 	Identifier() string
 
 	// checks if the given path matches the binary.
-	Matches(path string) bool // this should return a core.Version struct and a boolean if the path matches
+	Matches(path string) (Version, bool)
 
 	// problems here: needs the configuration (like software path), maybe as context.
 	Install(context.Context, Version) error

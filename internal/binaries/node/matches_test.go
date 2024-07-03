@@ -1,11 +1,11 @@
-package path
+package node
 
 import (
 	"fmt"
 	"testing"
 )
 
-func TestIsNodeJS(t *testing.T) {
+func TestMatcher(t *testing.T) {
 	cases := map[string]bool{
 		"/node-v22.3.0-darwin-arm64/bin": true,
 		"/node-v21.7.3-darwin-arm64/bin": true,
@@ -23,7 +23,8 @@ func TestIsNodeJS(t *testing.T) {
 
 	for p, expected := range cases {
 		t.Run(fmt.Sprintf("should return %v for %q", expected, p), func(t *testing.T) {
-			_, actual := IsNodeJS(p)
+			b := binary{}
+			_, actual := b.Matches(p)
 
 			if actual != expected {
 				t.Errorf("expected %v, got %v", expected, actual)
