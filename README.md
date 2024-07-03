@@ -10,7 +10,7 @@ Modern development is evolving fast and so are the tools we use. Sometimes we ha
 
 1) Download the latest release from the [releases page](...)
 2) Extract the archive
-3) Create an alias to the `boo.sh` file in your shell profile (read more about 'why alias' [here](#faq)):
+3) Create an alias to the `boo.sh` file in your shell profile (read more about 'why alias' [here](#why-alias)):
   * e.g. `alias boo='. /path/to/boo.sh'`
 4) Run `boo init` to:
   * create the configuration file
