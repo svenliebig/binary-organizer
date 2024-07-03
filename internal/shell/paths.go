@@ -1,15 +1,13 @@
-package paths
+package shell
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/svenliebig/seq"
 )
 
-type Paths interface {
-	Seq() seq.Seq[string]
-}
-
+// represents a list of path values.
 type paths struct {
 	value []string
 }
@@ -18,8 +16,10 @@ type paths struct {
 //
 // Example:
 //
-//	paths := paths.FromValue(os.Getenv("PATH"))
-func FromValue(value string) (p paths) {
+//	paths := paths.pathFromValue(os.Getenv("PATH"))
+func pathFromValue(value string) *paths {
+	p := &paths{}
+
 	r, err := seq.Collect(
 		seq.Unique(
 			seq.From(strings.Split(value, ":")),
@@ -27,16 +27,39 @@ func FromValue(value string) (p paths) {
 	)
 
 	if err != nil {
-		return
+		return p
 	}
 
+	// TODO maybe we shouldn't sort
 	p.value = sort(r)
 
-	return
+	return p
 }
 
-func (p paths) Seq() seq.Seq[string] {
+func (p *paths) seq() seq.Seq[string] {
 	return seq.From(p.value)
+}
+
+func (p *paths) add(path string) {
+	p.value = append(p.value, path)
+}
+
+func (p *paths) remove(path string) {
+	r, err := seq.Collect(
+		seq.Filter(
+			seq.From(p.value),
+			func(s string) (bool, error) {
+				return s != path, nil
+			},
+		),
+	)
+
+	if err != nil {
+		fmt.Println("error while removing path, this should not be possible:", err)
+		panic(err)
+	}
+
+	p.value = r
 }
 
 func sort(s []string) []string {
