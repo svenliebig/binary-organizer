@@ -1,42 +1,49 @@
 /*
-Copyright © 2024 NAME HERE <EMAIL ADDRESS>
+Copyright © 2024 Sven Liebig
 */
 package cmd
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/spf13/cobra"
+	"github.com/svenliebig/binary-organizer/internal/config"
+	"github.com/svenliebig/binary-organizer/internal/shell"
 )
 
 // initCmd represents the init command
 var initCmd = &cobra.Command{
-	Use:   "init",
-	Short: "Initializes 👻 bo(o) and set up your environment with the defaults.",
+	Use:     "init",
+	Aliases: []string{"initialize"},
+	Short:   "Initializes 👻 bo(o) and set up your environment with the defaults.",
 	Long: `Initializes 👻 bo(o) and set up your environment with the defaults, if
 you don't have a configuration file yet, it will create a configuration file
 in your ~/.config/boo directory. Then the configuration file will be used
 to set up your $PATH variable.`,
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		fmt.Println("init called")
 
-		// TODO find or create a configuration file in:
-		// - ~/.boo.toml
-		// - ~/.config/boo.toml
-		// - ~/.config/boo/boo.toml
+		_, err := config.Load()
 
-		// TODO read path
+		if err != nil {
+			return fmt.Errorf("could not load configuration: %w", err)
+		}
+
+		// read path
+		pth := shell.NewPath()
 
 		// TODO apply configuration
 
-		// TODO write path
+		// write path
+		// TODO change .path to constant?
+		err = os.WriteFile(".path", []byte(fmt.Sprintf("%s\n", pth.Export())), 0644)
 
-		// p := path.NewPathVariable()
-		// err = os.WriteFile(".path", []byte(fmt.Sprintf("%s\n", p.Export())), 0644)
-		// if err != nil {
-		// 	fmt.Println("Error writing the file")
-		// 	return
-		// }
+		if err != nil {
+			return fmt.Errorf("could not write path: %w", err)
+		}
+
+		return nil
 	},
 }
 
