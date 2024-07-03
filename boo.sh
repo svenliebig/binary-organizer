@@ -23,3 +23,4 @@ fi
 
 "$SCRIPTPATH/$EXECUTABLE" "$@"
 
+. "$SCRIPTPATH/.path"

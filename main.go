@@ -34,13 +34,10 @@ func main() {
 	fmt.Println("User home directory: ", pwd)
 
 	p := path.NewPathVariable()
+	err = os.WriteFile(".path", []byte(fmt.Sprintf("%s\n", p.Export())), 0644)
 
-	fmt.Println(p.Export())
-
-	// err = os.WriteFile(".path", []byte(fmt.Sprintf("PATH='%s'", path)), 0644)
-	//
-	// if err != nil {
-	// 	fmt.Println("Error writing the file")
-	// 	return
-	// }
+	if err != nil {
+		fmt.Println("Error writing the file")
+		return
+	}
 }
