@@ -80,7 +80,7 @@ var (
 
 			p.Add(binpath)
 
-			err = os.WriteFile(".path", []byte(fmt.Sprintf("%s\n", p.Export())), 0644)
+			err = shell.WritePath(p)
 
 			if err != nil {
 				return fmt.Errorf("could not write path: %w", err)
