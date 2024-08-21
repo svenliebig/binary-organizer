@@ -18,9 +18,10 @@ import (
 // nodeCmd represents the node command
 var (
 	nodeCmd = &cobra.Command{
-		Use:   "node",
-		Short: "Manage node versions",
-		Args:  cobra.MaximumNArgs(1),
+		Use:         "node",
+		Short:       "Manage node versions",
+		Args:        cobra.MaximumNArgs(1),
+		Annotations: annotationSourceTrue,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			nodeBinary, err := binaries.Get("node")
 
@@ -92,8 +93,9 @@ var (
 		},
 	}
 	nodeListCmd = &cobra.Command{
-		Use:   "list",
-		Short: "Lists all installed node versions",
+		Use:         "list",
+		Short:       "Lists all installed node versions",
+		Annotations: annotationSourceFalse,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			fmt.Printf("\n👻 bo(o) is looking for installed node versions 🧐\n\n")
 
@@ -103,18 +105,18 @@ var (
 				return fmt.Errorf("could not load configuration: %w", err)
 			}
 
-			// TODO test what happens if the directory does not exist
-
-			entries, err := os.ReadDir(path.Join(config.BinaryRoot, "node"))
-
-			if err != nil {
-				return fmt.Errorf("could not read directory: %w", err)
-			}
-
 			nodeBinary, err := binaries.Get("node")
 
 			if err != nil {
 				return fmt.Errorf("could not get binary: %w", err)
+			}
+
+			// TODO test what happens if the directory does not exist
+
+			entries, err := os.ReadDir(path.Join(config.BinaryRoot, nodeBinary.Identifier()))
+
+			if err != nil {
+				return fmt.Errorf("could not read directory: %w", err)
 			}
 
 			versions := make([]binaries.Version, 0, len(entries))

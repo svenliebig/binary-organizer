@@ -21,6 +21,14 @@ else
 	cd -
 fi
 
+# we need to somehow determine here if we should source the `.path` or not, probably through exit codes or something
 "$SCRIPTPATH/$EXECUTABLE" "$@"
 
-. "$SCRIPTPATH/.path"
+EXIT_CODE=$?
+
+if [ $EXIT_CODE -eq 20 ]; then
+	. "$SCRIPTPATH/.path"
+elif [ $EXIT_CODE -eq 21 ]; then
+	# Special Handlers maybe
+else
+fi

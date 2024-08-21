@@ -32,11 +32,19 @@ it with the desired pathes.`,
 }
 
 func Execute() {
-	err := rootCmd.Execute()
+	c, err := rootCmd.ExecuteC()
+
 	if err != nil {
 		fmt.Println(err)
-
 		os.Exit(1)
+	}
+
+	if c != nil {
+		if shouldSource(c) {
+			os.Exit(20)
+		} else {
+			os.Exit(21)
+		}
 	}
 }
 
