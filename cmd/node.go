@@ -6,12 +6,11 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"os"
-	"path"
 
 	"github.com/spf13/cobra"
 	"github.com/svenliebig/binary-organizer/internal/binaries"
 	"github.com/svenliebig/binary-organizer/internal/config"
+	"github.com/svenliebig/binary-organizer/internal/service"
 	"github.com/svenliebig/binary-organizer/internal/shell"
 )
 
@@ -26,6 +25,8 @@ var (
 			nodeBinary, err := binaries.Get("node")
 
 			if err != nil {
+				// 😱 An error occurred that you shouldn't encounter. We're sorry! Please run the command again with --debug to get more information and report the issue on GitHub.
+				// --debug should also print the platform and arch.
 				return fmt.Errorf("could not get binary: %w", err)
 			}
 
@@ -99,37 +100,23 @@ var (
 		RunE: func(cmd *cobra.Command, args []string) error {
 			fmt.Printf("\n👻 bo(o) is looking for installed node versions 🧐\n\n")
 
-			config, err := config.Load()
-
-			if err != nil {
-				return fmt.Errorf("could not load configuration: %w", err)
-			}
-
 			nodeBinary, err := binaries.Get("node")
 
 			if err != nil {
 				return fmt.Errorf("could not get binary: %w", err)
 			}
 
-			// TODO test what happens if the directory does not exist
-
-			entries, err := os.ReadDir(path.Join(config.BinaryRoot, nodeBinary.Identifier()))
+			s, err := service.New(nodeBinary)
 
 			if err != nil {
-				return fmt.Errorf("could not read directory: %w", err)
+				return fmt.Errorf("could not create service: %w", err)
 			}
 
-			versions := make([]binaries.Version, 0, len(entries))
-			for _, entry := range entries {
-				if !entry.IsDir() {
-					continue
-				}
+			versions, err := s.Versions()
 
-				v, ok := nodeBinary.Matches(entry.Name())
-
-				if ok {
-					versions = append(versions, v)
-				}
+			// TODO handle boo. Errors
+			if err != nil {
+				return fmt.Errorf("could not get versions: %w", err)
 			}
 
 			if len(versions) == 0 {

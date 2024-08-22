@@ -25,9 +25,8 @@ func New(binary binaries.Binary) (*service, error) {
 // returns the installed versions of the binary that was passed to the service.
 //
 // possible errors:
-//
-// - boo.ErrBinaryDirNotExists
-// - boo.ErrBinaryDirIsFile
+//  - boo.ErrBinaryDirNotExists
+//  - boo.ErrBinaryDirIsFile
 func (s *service) Versions() ([]binaries.Version, error) {
 	p, err := s.getBinaryDir()
 
