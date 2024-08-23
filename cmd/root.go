@@ -8,8 +8,10 @@ import (
 	"os"
 
 	_ "github.com/svenliebig/binary-organizer/internal/binaries/node"
+	"github.com/svenliebig/binary-organizer/internal/logging"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var rootCmd = &cobra.Command{
@@ -21,6 +23,14 @@ for example if you need a different version of node or python for a project.
 
 To achieve that, bo(o) reads the content of the $PATH variable and overrides
 it with the desired pathes.`,
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		viper.BindPFlag("debug", cmd.Flags().Lookup("debug"))
+
+		if viper.GetBool("debug") {
+			logging.SetLevel(logging.DebugLevel)
+			logging.Info("🐞 debug mode enabled")
+		}
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cmd.Println("👻 bo(o) is wondering 💭 what it can do(o) for you?")
 
@@ -49,4 +59,5 @@ func Execute() {
 }
 
 func init() {
+	rootCmd.PersistentFlags().BoolP("debug", "d", false, "enable debug output")
 }
