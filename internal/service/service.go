@@ -1,25 +1,38 @@
 package service
 
 import (
+	"errors"
 	"io/fs"
 	"os"
 	"path"
 
 	"github.com/svenliebig/binary-organizer/internal/binaries"
+	"github.com/svenliebig/binary-organizer/internal/boo"
 	"github.com/svenliebig/binary-organizer/internal/config"
 	"github.com/svenliebig/seq"
 )
 
 type service struct {
 	binary binaries.Binary
-	config config.Config
+	config *config.Config
 }
 
 func New(binary binaries.Binary) (*service, error) {
-	config, err := config.Load()
+	c, err := config.Load()
+
+	if err != nil {
+		if errors.Is(err, boo.ErrConfigFileNotExists) {
+			c, err = config.Create()
+		}
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
 	return &service{
 		binary: binary,
-		config: config,
+		config: c,
 	}, err
 }
 

@@ -34,6 +34,12 @@ var (
 				return nil
 			}
 
+			s, err := service.New(nodeBinary)
+
+			if err != nil {
+				return fmt.Errorf("could not create service: %w", err)
+			}
+
 			version, err := binaries.VersionFrom(args[0])
 
 			if err != nil {
@@ -48,12 +54,6 @@ var (
 			}
 
 			fmt.Printf("\n👻 bo(o) is trying to select %s v%s for you 💪\n\n", nodeBinary.Identifier(), version.String())
-
-			s, err := service.New(nodeBinary)
-
-			if err != nil {
-				return fmt.Errorf("could not create service: %w", err)
-			}
 
 			binpath, ok := s.IsInstalled(version)
 

@@ -11,4 +11,6 @@ var (
 	ErrBinaryDirNotExists = errors.New("binary directory does not exist")
 	// ErrBinaryDirIsFile is returned when the binary directory is a file.
 	ErrBinaryDirIsFile = errors.New("binary directory is a file")
+	// ErrConfigFileNotExists is returned when the config file does not exist.
+	ErrConfigFileNotExists = errors.New("config file does not exist")
 )
