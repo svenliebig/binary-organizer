@@ -78,3 +78,5 @@ The reason why we need an alias for the execution, is the way shell scripts get 
 - [ ] Add for boo configuration files in the cwd, possibly also with merge
 - [ ] Add a boo init command to setup the configuration file
 - [ ] Add a boo config subcommand to manage the configuration file
+- [ ] Add a boo check subcommand to verify the configured directories in the $PATH environment variable
+- [ ] Add `-s` flag for silent mode (refactor the boo output to be centralized), this will be used mainly for the boo init command
