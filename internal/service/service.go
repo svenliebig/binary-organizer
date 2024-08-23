@@ -3,6 +3,7 @@ package service
 import (
 	"io/fs"
 	"os"
+	"path"
 
 	"github.com/svenliebig/binary-organizer/internal/binaries"
 	"github.com/svenliebig/binary-organizer/internal/config"
@@ -25,8 +26,8 @@ func New(binary binaries.Binary) (*service, error) {
 // returns the installed versions of the binary that was passed to the service.
 //
 // possible errors:
-//  - boo.ErrBinaryDirNotExists
-//  - boo.ErrBinaryDirIsFile
+//   - boo.ErrBinaryDirNotExists
+//   - boo.ErrBinaryDirIsFile
 func (s *service) Versions() ([]binaries.Version, error) {
 	p, err := s.getBinaryDir()
 
@@ -62,4 +63,30 @@ func (s *service) Versions() ([]binaries.Version, error) {
 			return acc, nil
 		},
 	)
+}
+
+// checks if the binary is installed and returns the path to the binary directory.
+func (s *service) IsInstalled(v binaries.Version) (string, bool) {
+	p, err := s.getBinaryDir()
+
+	if err != nil {
+		// TODO log
+		return "", false
+	}
+
+	entries, err := os.ReadDir(p)
+
+	for _, entry := range entries {
+		if !entry.IsDir() {
+			continue
+		}
+
+		if vers, ok := s.binary.Matches(entry.Name()); ok {
+			if v.Matches(vers) {
+				return s.binary.BinPath(path.Join(p, entry.Name())), true
+			}
+		}
+	}
+
+	return "", false
 }

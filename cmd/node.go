@@ -4,12 +4,10 @@ Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/spf13/cobra"
 	"github.com/svenliebig/binary-organizer/internal/binaries"
-	"github.com/svenliebig/binary-organizer/internal/config"
 	"github.com/svenliebig/binary-organizer/internal/service"
 	"github.com/svenliebig/binary-organizer/internal/shell"
 )
@@ -31,7 +29,7 @@ var (
 			}
 
 			if len(args) == 0 {
-				fmt.Println("👻 bo(o) is wondering 💭 what it can do(o) for you?")
+				fmt.Print("👻 bo(o) is wondering 💭 what it can do(o) for you?\n\n")
 				cmd.Help()
 				return nil
 			}
@@ -51,16 +49,16 @@ var (
 
 			fmt.Printf("\n👻 bo(o) is trying to select %s v%s for you 💪\n\n", nodeBinary.Identifier(), version.String())
 
-			config, err := config.Load()
+			s, err := service.New(nodeBinary)
 
 			if err != nil {
-				return fmt.Errorf("could not load configuration: %w", err)
+				return fmt.Errorf("could not create service: %w", err)
 			}
 
-			binpath, ok := nodeBinary.IsInstalled(context.TODO(), config.BinaryRoot, version)
+			binpath, ok := s.IsInstalled(version)
 
 			if !ok {
-				fmt.Printf("😨 %s v%s is not installed yet. Let's try to install it 🛠\n\n", nodeBinary.Identifier(), version.String())
+				fmt.Printf("😨 %s v%s is not installed yet. Try the command 'boo %s list' to list all available versions of the binary.\n\n", nodeBinary.Identifier(), version.String(), nodeBinary.Identifier())
 
 				// TODO implement installation
 				// if err := nodeBinary.Install(context.Background(), *version); err != nil {

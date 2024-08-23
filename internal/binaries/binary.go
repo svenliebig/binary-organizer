@@ -3,8 +3,6 @@ package binaries
 import (
 	"errors"
 	"sync"
-
-	"context"
 )
 
 var ErrBinaryNotFound = errors.New("binary not found")
@@ -19,12 +17,9 @@ type Binary interface {
 	// checks if the given path matches the binary.
 	Matches(path string) (Version, bool)
 
-	// problems here: needs the configuration (like software path), maybe as context.
-	Install(context.Context, Version) error
-
-	// checks if the given version of that binary is installed.
-	// if it is installed, it returns the path to the binary.
-	IsInstalled(context.Context, string, Version) (string, bool)
+	// returns the path to the bin directory of the binary.
+	// given is the root path of the version directory.
+	BinPath(string) string
 }
 
 func Register(b Binary) {
