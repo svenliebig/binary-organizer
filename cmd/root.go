@@ -4,7 +4,6 @@ Copyright © 2024 Sven Liebig
 package cmd
 
 import (
-	"fmt"
 	"os"
 
 	_ "github.com/svenliebig/binary-organizer/internal/binaries/node"
@@ -45,7 +44,7 @@ func Execute() {
 	c, err := rootCmd.ExecuteC()
 
 	if err != nil {
-		fmt.Println(err)
+		logging.Error("could not execute command", err)
 		os.Exit(1)
 	}
 

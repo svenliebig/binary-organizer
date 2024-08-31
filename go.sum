@@ -46,6 +46,10 @@ github.com/svenliebig/seq v0.0.0-20240424164551-305228171065 h1:FhwN0u/rccDDoksC
 github.com/svenliebig/seq v0.0.0-20240424164551-305228171065/go.mod h1:8Pj9sdCOlnMPHVIycwuVN4R+Dq6oKq50LPAIfF8xwiw=
 github.com/svenliebig/seq v0.0.0-20240620135719-6df77487d237 h1:XQP8OkNVpEpDYB6R7MUb7ApNbnD3eJLz0wQ23KsW5jI=
 github.com/svenliebig/seq v0.0.0-20240620135719-6df77487d237/go.mod h1:8Pj9sdCOlnMPHVIycwuVN4R+Dq6oKq50LPAIfF8xwiw=
+github.com/svenliebig/seq v0.0.0-20240831134256-8209bbaf47a6 h1:AXseQDwkJnDxrIPmR94pP3+uj/elFCI7ots9d0Kae1w=
+github.com/svenliebig/seq v0.0.0-20240831134256-8209bbaf47a6/go.mod h1:8Pj9sdCOlnMPHVIycwuVN4R+Dq6oKq50LPAIfF8xwiw=
+github.com/svenliebig/seq v0.0.0-20240831140042-ee535a0238bf h1:XPumwseB+oFBS9A1Nmy3dSRUPiYziS465Wz/mORLerY=
+github.com/svenliebig/seq v0.0.0-20240831140042-ee535a0238bf/go.mod h1:8Pj9sdCOlnMPHVIycwuVN4R+Dq6oKq50LPAIfF8xwiw=
 go.uber.org/atomic v1.9.0 h1:ECmE8Bn/WFTYwEW/bpKD3M8VtR/zQVbavAoalC1PYyE=
 go.uber.org/atomic v1.9.0/go.mod h1:fEN4uk6kAWBTFdckzkM89CLk9XfWZrxpCo0nPH17wJc=
 go.uber.org/multierr v1.9.0 h1:7fIwc/ZtS0q++VgcfqFDxSBZVv/Xo49/SYnDFupUwlI=

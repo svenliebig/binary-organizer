@@ -22,7 +22,7 @@ func TestGetBinaryDir(t *testing.T) {
 
 		s := service{
 			binary: node,
-			config: config.Config{
+			config: &config.Config{
 				BinaryRoot: getValidBinaryTestdataDir(),
 			},
 		}
@@ -48,7 +48,7 @@ func TestGetBinaryDir(t *testing.T) {
 
 		s := service{
 			binary: node,
-			config: config.Config{
+			config: &config.Config{
 				BinaryRoot: getInvalidBinaryTestdataDir(),
 			},
 		}
@@ -73,7 +73,7 @@ func TestGetBinaryDir(t *testing.T) {
 
 		s := service{
 			binary: node,
-			config: config.Config{
+			config: &config.Config{
 				BinaryRoot: getInvalidBinaryTestdataFile(),
 			},
 		}

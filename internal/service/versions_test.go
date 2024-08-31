@@ -23,7 +23,7 @@ func TestVersions(t *testing.T) {
 	t.Run("should return installed node versions", func(t *testing.T) {
 		s := service{
 			binary: node,
-			config: config.Config{
+			config: &config.Config{
 				BinaryRoot: getValidBinaryTestdataDir(),
 			},
 		}

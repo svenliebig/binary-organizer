@@ -1,13 +1,15 @@
 /*
-Copyright © 2024 NAME HERE <EMAIL ADDRESS>
+Copyright © 2024 Sven Liebig
 */
 package cmd
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/spf13/cobra"
 	"github.com/svenliebig/binary-organizer/internal/binaries"
+	"github.com/svenliebig/binary-organizer/internal/boo"
 	"github.com/svenliebig/binary-organizer/internal/service"
 	"github.com/svenliebig/binary-organizer/internal/shell"
 )
@@ -55,32 +57,13 @@ var (
 
 			fmt.Printf("\n👻 bo(o) is trying to select %s v%s for you 💪\n\n", nodeBinary.Identifier(), version.String())
 
-			binpath, ok := s.IsInstalled(version)
+			err = s.SetVersion(version)
 
-			if !ok {
+			if errors.Is(err, boo.ErrVersionNotInstalled) {
 				fmt.Printf("😨 %s v%s is not installed yet. Try the command 'boo %s list' to list all available versions of the binary.\n\n", nodeBinary.Identifier(), version.String(), nodeBinary.Identifier())
 
-				// TODO implement installation
-				// if err := nodeBinary.Install(context.Background(), *version); err != nil {
-				// 	return fmt.Errorf("could not install %s v%s: %w", nodeBinary.Identifier(), version.String(), err)
-				// }
-
-				return nil
+				return err
 			}
-
-			p := shell.NewPath()
-
-			// remove other node versions
-			for _, pth := range p.Find(func(p string) bool {
-				_, ok := nodeBinary.Matches(p)
-				return ok
-			}) {
-				p.Remove(pth)
-			}
-
-			p.Add(binpath)
-
-			err = shell.WritePath(p)
 
 			if err != nil {
 				return fmt.Errorf("could not write path: %w", err)

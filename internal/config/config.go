@@ -29,6 +29,7 @@ func init() {
 }
 
 type Config struct {
+	// the root path where the binaries are stored.
 	BinaryRoot string
 	Defaults   map[string]string
 }
@@ -45,6 +46,11 @@ func (c Config) DefaultVersion(identifier string) (string, error) {
 func Create() (*Config, error) {
 	logging.Debug("creating configuration file")
 	err := viper.SafeWriteConfig()
+
+	// TODO exclude some values from the configuration file
+	// because for example if I have root cmd flags and put
+	// them into the env of viper, they are saved into the
+	// configuration file as well. Things like --quite or --debug.
 
 	if err != nil {
 		logging.Error("could not write configuration file", err)

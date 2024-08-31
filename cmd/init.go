@@ -22,8 +22,6 @@ you don't have a configuration file yet, it will create a configuration file
 in your ~/.config/boo directory. Then the configuration file will be used
 to set up your $PATH variable.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Println("init called")
-
 		_, err := config.Load()
 
 		if err != nil {
