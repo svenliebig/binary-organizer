@@ -4,12 +4,13 @@ Copyright © 2024 Sven Liebig
 package cmd
 
 import (
-	"fmt"
-	"os"
+	"errors"
 
 	"github.com/spf13/cobra"
-	"github.com/svenliebig/binary-organizer/internal/config"
-	"github.com/svenliebig/binary-organizer/internal/shell"
+	"github.com/svenliebig/binary-organizer/internal/binaries"
+	"github.com/svenliebig/binary-organizer/internal/boo"
+	"github.com/svenliebig/binary-organizer/internal/logging"
+	"github.com/svenliebig/binary-organizer/internal/service"
 )
 
 // initCmd represents the init command
@@ -21,25 +22,49 @@ var initCmd = &cobra.Command{
 you don't have a configuration file yet, it will create a configuration file
 in your ~/.config/boo directory. Then the configuration file will be used
 to set up your $PATH variable.`,
+	Annotations:   annotationSourceTrue,
+	SilenceUsage:  true,
+	SilenceErrors: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		_, err := config.Load()
+		defer logging.Fn("initCmd.RunE")()
 
-		if err != nil {
-			return fmt.Errorf("could not load configuration: %w", err)
+		boo.Intro("is initializing the default versions of your binaries...📦")
+
+		binarySeq := binaries.All()
+
+		for b, _ := range binarySeq.Iterator() {
+			s, err := service.New(b)
+
+			if err != nil {
+				logging.Error("err while trying to create a service", err)
+				return err
+			}
+
+			v, err := s.GetDefaultVersion()
+
+			if err != nil {
+				if errors.Is(err, boo.ErrNoDefaultVersion) {
+					boo.Bodyf("  ⚠️ %s has no default version set", b.Identifier())
+					continue
+				} else {
+					return err
+				}
+			}
+
+			err = s.SetVersion(v)
+
+			if err != nil {
+				if errors.Is(err, boo.ErrVersionNotInstalled) {
+					boo.Bodyf("  ⚠️ %s version %s is not installed and can't be set", b.Identifier(), v.String())
+				} else {
+					return err
+				}
+			} else {
+				boo.Bodyf("  ✏️ using %s in version %s", b.Identifier(), v.String())
+			}
 		}
 
-		// read path
-		pth := shell.NewPath()
-
-		// TODO apply configuration
-
-		// write path
-		// TODO change .path to constant?
-		err = os.WriteFile(".path", []byte(fmt.Sprintf("%s\n", pth.Export())), 0644)
-
-		if err != nil {
-			return fmt.Errorf("could not write path: %w", err)
-		}
+		boo.Outro("has setup your environment 🎉\n\nTip: to supress this message, you can use the --silent (or -s) flag like this: \n\n  boo init -s")
 
 		return nil
 	},

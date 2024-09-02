@@ -31,7 +31,7 @@ var (
 			}
 
 			if len(args) == 0 {
-				fmt.Print("👻 bo(o) is wondering 💭 what it can do(o) for you?\n\n")
+				boo.Intro("is wondering 💭 what it can do(o) for you?")
 				cmd.Help()
 				return nil
 			}

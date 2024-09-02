@@ -5,6 +5,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/svenliebig/binary-organizer/internal/logging"
 	"github.com/svenliebig/seq"
 )
 
@@ -33,6 +34,7 @@ type path struct {
 }
 
 func NewPath() Path {
+	defer logging.Fn("shell.NewPath")()
 	return path{
 		content: pathFromValue(os.Getenv("PATH")),
 	}

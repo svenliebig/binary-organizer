@@ -3,6 +3,9 @@ package binaries
 import (
 	"errors"
 	"sync"
+
+	"github.com/svenliebig/binary-organizer/internal/logging"
+	"github.com/svenliebig/seq"
 )
 
 var ErrBinaryNotFound = errors.New("binary not found")
@@ -23,20 +26,26 @@ type Binary interface {
 }
 
 func Register(b Binary) {
+	defer logging.Fn("binaries.Register")()
+
 	lock.Lock()
 	defer lock.Unlock()
 
 	binaries = append(binaries, b)
 }
 
-func All() []Binary {
+func All() seq.Seq[Binary] {
+	defer logging.Fn("binaries.All")()
+
 	lock.RLock()
 	defer lock.RUnlock()
 
-	return binaries
+	return seq.From(binaries)
 }
 
 func Get(identifier string) (Binary, error) {
+	defer logging.Fn("binaries.Get")()
+
 	lock.RLock()
 	defer lock.RUnlock()
 

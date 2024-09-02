@@ -20,6 +20,8 @@ type service struct {
 }
 
 func New(binary binaries.Binary) (*service, error) {
+	defer logging.Fn("service.New")()
+
 	c, err := config.Load()
 
 	if err != nil {
@@ -29,6 +31,7 @@ func New(binary binaries.Binary) (*service, error) {
 	}
 
 	if err != nil {
+		logging.Error("could not load configuration", err)
 		return nil, err
 	}
 
@@ -75,15 +78,27 @@ func (s *service) Versions() ([]binaries.Version, error) {
 }
 
 // checks if the binary is installed and returns the path to the binary directory.
-func (s *service) IsInstalled(v binaries.Version) (string, bool) {
+//
+// possible errors:
+//   - boo.ErrVersionNotInstalled
+//   - boo.ErrBinaryDirNotExists
+//   - boo.ErrBinaryDirIsFile
+func (s *service) getBinPath(v binaries.Version) (string, error) {
+	defer logging.Fn("service.getBinPath")()
+
 	p, err := s.getBinaryDir()
 
 	if err != nil {
-		// TODO log
-		return "", false
+		return "", err
 	}
 
+	logging.Infof("binary directory %q", p)
 	entries, err := os.ReadDir(p)
+
+	if err != nil {
+		logging.Error("could not read the binary directory", err)
+		return "", err
+	}
 
 	for _, entry := range entries {
 		if !entry.IsDir() {
@@ -92,23 +107,56 @@ func (s *service) IsInstalled(v binaries.Version) (string, bool) {
 
 		if vers, ok := s.binary.Matches(entry.Name()); ok {
 			if v.Matches(vers) {
-				return s.binary.BinPath(path.Join(p, entry.Name())), true
+				return s.binary.BinPath(path.Join(p, entry.Name())), nil
 			}
 		}
 	}
 
-	return "", false
+	return "", boo.ErrVersionNotInstalled
+}
+
+// returns the default version of the binary that was passed to the service.
+// the default version is read from the configuration file.
+// 
+// possible errors:
+//   - boo.ErrNoDefaultVersion
+func (s *service) GetDefaultVersion() (binaries.Version, error) {
+	defer logging.Fn("service.GetDefaultVersion")()
+
+	versionstr, err := s.config.DefaultVersion(s.binary.Identifier())
+	logging.Infof("default version %q for %q", versionstr, s.binary.Identifier())
+
+	if err != nil {
+		return nil, err
+	}
+
+	v, err := binaries.VersionFrom(versionstr)
+	logging.Infof("version %q", v)
+
+	if err != nil {
+		logging.Error("could not create version from string", err)
+		return nil, err
+	}
+
+	return v, nil
 }
 
 // sets a version of the configured binary in the PATH variable.
 //
 // first it will check if the version is instelled, if not, it will
 // return a boo.ErrVersionNotInstalled error.
+//
+// possible errors:
+//   - boo.ErrVersionNotInstalled
+//   - boo.ErrBinaryDirNotExists
+//   - boo.ErrBinaryDirIsFile
 func (s *service) SetVersion(version binaries.Version) error {
-	binp, ok := s.IsInstalled(version)
+	defer logging.Fn("service.SetVersion")()
 
-	if !ok {
-		return boo.ErrVersionNotInstalled
+	binp, err := s.getBinPath(version)
+
+	if err != nil {
+		return err
 	}
 
 	p := shell.NewPath()

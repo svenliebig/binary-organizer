@@ -1,0 +1,65 @@
+package service
+
+import (
+	"context"
+	"fmt"
+
+	"github.com/svenliebig/binary-organizer/internal/binaries"
+	"github.com/svenliebig/binary-organizer/internal/config"
+	"github.com/svenliebig/binary-organizer/internal/shell"
+)
+
+type PathModifier struct {
+	pathes shell.Path
+}
+
+func NewPathModifier(paths shell.Path) *PathModifier {
+	return &PathModifier{
+		pathes: paths,
+	}
+}
+
+func (pm *PathModifier) Paths() shell.Path {
+	return pm.pathes
+}
+
+func (pm *PathModifier) Use(b binaries.Binary, v binaries.Version) error {
+	var ok bool
+	var binarypath string
+
+	config, err := config.Load()
+
+	if err != nil {
+		return fmt.Errorf("could not load configuration: %w", err)
+	}
+
+	if binarypath, ok = b.IsInstalled(context.TODO(), config.BinaryRoot, v); ok {
+		err := b.Install(context.TODO(), v)
+
+		if err != nil {
+			return fmt.Errorf("could not install binary: %s", b)
+		}
+
+		if binarypath, ok = b.IsInstalled(context.TODO(), config.BinaryRoot, v); ok {
+			return fmt.Errorf("could not find binary after installation: %s", b)
+		}
+	}
+
+	// remove existing paths
+	pm.Remove(b)
+
+	// add new path
+	pm.pathes.Add(binarypath)
+
+	return nil
+}
+
+// removes all paths that matches the binary.
+func (pm *PathModifier) Remove(b binaries.Binary) {
+	for _, pth := range pm.pathes.Find(func(p string) bool {
+		_, ok := b.Matches(p)
+		return ok
+	}) {
+		pm.pathes.Remove(pth)
+	}
+}

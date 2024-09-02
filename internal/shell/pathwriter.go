@@ -4,13 +4,18 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+
+	"github.com/svenliebig/binary-organizer/internal/logging"
 )
 
 func WritePath(p Path) error {
+	defer logging.Fn("shell.WritePath")()
+
 	exe, err := os.Executable()
 
 	if err != nil {
-		return fmt.Errorf("could not get executable: %w", err)
+		logging.Error("could not get executable", err)
+		return err
 	}
 
 	dir := filepath.Dir(exe)
@@ -19,8 +24,11 @@ func WritePath(p Path) error {
 	err = os.WriteFile(filename, []byte(fmt.Sprintf("%s\n", p.Export())), 0644)
 
 	if err != nil {
-		return fmt.Errorf("could not write path: %w", err)
+		logging.Error("could not write path to file", err)
+		return err
 	}
+
+	logging.Info("wrote path to file", filename)
 
 	return nil
 }

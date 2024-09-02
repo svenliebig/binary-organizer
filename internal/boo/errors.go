@@ -16,4 +16,6 @@ var (
 	// ErrVersionNotInstalled is returned when the requested version was not found
 	// in the binary directory.
 	ErrVersionNotInstalled = errors.New("version is not installed")
+	// ErrNoDefaultVersion is returned when no default version was found.
+	ErrNoDefaultVersion = errors.New("no default version found")
 )
