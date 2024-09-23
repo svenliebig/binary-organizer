@@ -4,15 +4,17 @@ What is 👻 bo(o)? A small CLI Tool to organize different versions of your bina
 
 ## Why?
 
-Modern development is evolving fast and so are the tools we use. Sometimes we have the need to use three or more different versions of the same binary, across different projects (talking to you NodeJS). Despite that there are tools like [`nvm`](https://github.com/nvm-sh/nvm), [`pyenv`](https://github.com/pyenv/pyenv) or other tools for other languages, binaries and tools, I prefer to have actually *less* installed on my system, so I have more control over the behavior of my system. That's what `👻 bo(o)` is trying to solve.
+Modern development is evolving fast and so are the tools we use. Sometimes we have the need to use three or more different versions of the same binary, across different projects (talking to you NodeJS). Despite that there are tools like [`nvm`](https://github.com/nvm-sh/nvm), [`pyenv`](https://github.com/pyenv/pyenv) or other tools for other languages, binaries and tools, I prefer to have actually _less_ installed on my system, so I have more control over the behavior of my system. That's what `👻 bo(o)` is trying to solve.
 
 ## Installation
 
-1) Make sure to have [Go](https://go.dev/dl/) >= 1.22 installed
-2) Clone the repository: `git clone https://github.com/svenliebig/binary-organizer.git`
-3) Create an alias to the `boo.sh` file in your shell profile (read more about 'why alias' [here](#why-alias)):
-  * e.g. `alias boo='. /path/to/binary-organizer/boo.sh'`
-4) 🚀 You're ready to go!
+1. Make sure to have [Go](https://go.dev/dl/) >= 1.22 installed
+2. Clone the repository: `git clone https://github.com/svenliebig/binary-organizer.git`
+3. Create an alias to the `boo.sh` file in your shell profile (read more about 'why alias' [here](#why-alias)):
+
+- e.g. `alias boo='. /path/to/binary-organizer/boo.sh'`
+
+4. 🚀 You're ready to go!
 
 ## Required Structure
 
@@ -24,6 +26,9 @@ Modern development is evolving fast and so are the tools we use. Sometimes we ha
 │   ├── node-v16.20.2-darwin-arm64
 │   ├── node-v18.20.3-darwin-arm64
 │   ├── node-v20.15.0-darwin-arm64
+├── maven
+│   ├── apache-maven-2.2.0
+│   ├── apache-maven-3.6.3
 ├── go
 ├── python
 ├── java
@@ -38,11 +43,14 @@ boo node 14.17.0 # sets the node version to 14.17.0
 boo node 14      # sets the node version to the latest 14.x version
 boo node 22      # sets the node version to the latest 22.x version
 boo node list    # prints the installed node versions
+
+boo maven 3.8 # sets the maven version to 3.8.x
 ```
 
 ## Supported Binaries
 
 - [x] NodeJS
+- [x] Maven
 - [ ] Python
 - [ ] Java
 - [ ] Go

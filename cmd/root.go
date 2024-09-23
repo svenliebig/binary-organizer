@@ -7,6 +7,7 @@ import (
 	"errors"
 	"os"
 
+	_ "github.com/svenliebig/binary-organizer/internal/binaries/maven"
 	_ "github.com/svenliebig/binary-organizer/internal/binaries/node"
 	"github.com/svenliebig/binary-organizer/internal/boo"
 	"github.com/svenliebig/binary-organizer/internal/config"

@@ -21,6 +21,7 @@ func init() {
 
 	viper.SetDefault("path", path.Join(home, "workspace", "software"))
 	viper.SetDefault("defaults.node", "unset")
+	viper.SetDefault("defaults.maven", "unset")
 }
 
 type Config struct {
@@ -31,7 +32,7 @@ type Config struct {
 
 // returns the default version for the given binary identifier.
 // if no default version is found, it returns an error.
-// 
+//
 // possible errors:
 //   - boo.ErrNoDefaultVersion
 func (c Config) DefaultVersion(identifier string) (string, error) {
