@@ -51,6 +51,12 @@ it with the desired pathes.`,
 		}
 
 		silent, err := cmd.Flags().GetBool("silent")
+
+		if err != nil {
+			logging.Error("could not get silent flag", err)
+			return err
+		}
+
 		boo.Silent(silent)
 
 		return nil
