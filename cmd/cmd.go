@@ -69,7 +69,7 @@ func createCommand(identifier string) *cobra.Command {
 				return fmt.Errorf("could not write path: %w", err)
 			}
 
-			fmt.Printf("\n✅ bo(o) has set up your environment with the selected %s version 🎉", identifier)
+			fmt.Printf("✅ bo(o) has set up your environment with the selected %s version 🎉\n", identifier)
 
 			return nil
 		},
