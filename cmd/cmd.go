@@ -12,17 +12,17 @@ import (
 	"github.com/svenliebig/binary-organizer/internal/boo"
 	"github.com/svenliebig/binary-organizer/internal/service"
 	"github.com/svenliebig/binary-organizer/internal/shell"
+	"github.com/svenliebig/seq"
 )
 
-// nodeCmd represents the node command
-var (
-	nodeCmd = &cobra.Command{
-		Use:         "node",
-		Short:       "Manage node versions",
+func createCommand(identifier string) *cobra.Command {
+	root := &cobra.Command{
+		Use:         identifier,
+		Short:       "Manage " + identifier + " versions",
 		Args:        cobra.MaximumNArgs(1),
 		Annotations: annotationSourceTrue,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			nodeBinary, err := binaries.Get("node")
+			binary, err := binaries.Get(identifier)
 
 			if err != nil {
 				// 😱 An error occurred that you shouldn't encounter. We're sorry! Please run the command again with --debug to get more information and report the issue on GitHub.
@@ -36,7 +36,7 @@ var (
 				return nil
 			}
 
-			s, err := service.New(nodeBinary)
+			s, err := service.New(binary)
 
 			if err != nil {
 				return fmt.Errorf("could not create service: %w", err)
@@ -55,12 +55,12 @@ var (
 				return nil
 			}
 
-			fmt.Printf("\n👻 bo(o) is trying to select %s v%s for you 💪\n\n", nodeBinary.Identifier(), version.String())
+			fmt.Printf("\n👻 bo(o) is trying to select %s v%s for you 💪\n\n", binary.Identifier(), version.String())
 
 			err = s.SetVersion(version)
 
 			if errors.Is(err, boo.ErrVersionNotInstalled) {
-				fmt.Printf("😨 %s v%s is not installed yet. Try the command 'boo %s list' to list all available versions of the binary.\n\n", nodeBinary.Identifier(), version.String(), nodeBinary.Identifier())
+				fmt.Printf("😨 %s v%s is not installed yet. Try the command 'boo %s list' to list all available versions of the binary.\n\n", binary.Identifier(), version.String(), binary.Identifier())
 
 				return err
 			}
@@ -69,25 +69,26 @@ var (
 				return fmt.Errorf("could not write path: %w", err)
 			}
 
-			fmt.Println("✅ bo(o) has set up your environment with the selected node version 🎉")
+			fmt.Printf("\n✅ bo(o) has set up your environment with the selected %s version 🎉", identifier)
 
 			return nil
 		},
 	}
-	nodeListCmd = &cobra.Command{
+
+	list := &cobra.Command{
 		Use:         "list",
-		Short:       "Lists all installed node versions",
+		Short:       fmt.Sprintf("Lists all installed %s versions", identifier),
 		Annotations: annotationSourceFalse,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			fmt.Printf("\n👻 bo(o) is looking for installed node versions 🧐\n\n")
+			fmt.Printf("\n👻 bo(o) is looking for installed %s versions 🧐\n\n", identifier)
 
-			nodeBinary, err := binaries.Get("node")
+			binary, err := binaries.Get(identifier)
 
 			if err != nil {
 				return fmt.Errorf("could not get binary: %w", err)
 			}
 
-			s, err := service.New(nodeBinary)
+			s, err := service.New(binary)
 
 			if err != nil {
 				return fmt.Errorf("could not create service: %w", err)
@@ -101,24 +102,24 @@ var (
 			}
 
 			if len(versions) == 0 {
-				fmt.Println("🫣 No node versions found.")
+				fmt.Printf("\n🫣 No %s versions found.", identifier)
 				return nil
 			}
 
 			p := shell.NewPath()
 			var selected binaries.Version
 
-			nodePaths := p.Find(func(p string) bool {
-				_, ok := nodeBinary.Matches(p)
+			paths := p.Find(func(p string) bool {
+				_, ok := binary.Matches(p)
 				return ok
 			})
 
-			if len(nodePaths) > 0 {
-				v, _ := nodeBinary.Matches(nodePaths[len(nodePaths)-1])
+			if len(paths) > 0 {
+				v, _ := binary.Matches(paths[len(paths)-1])
 				selected = v
 			}
 
-			fmt.Printf("🔎 Found the following node versions:\n\n")
+			fmt.Printf("🔎 Found the following %s versions:\n\n", identifier)
 			for _, v := range versions {
 				if v.Matches(selected) {
 					fmt.Println("👉", v, "(selected)")
@@ -131,19 +132,25 @@ var (
 			return nil
 		},
 	}
-)
+
+	root.AddCommand(list)
+	return root
+}
 
 func init() {
-	rootCmd.AddCommand(nodeCmd)
-	nodeCmd.AddCommand(nodeListCmd)
+	cmds := seq.Map(
+		seq.Map(
+			binaries.All(),
+			func(b binaries.Binary) (string, error) {
+				return b.Identifier(), nil
+			},
+		),
+		func(s string) (*cobra.Command, error) {
+			return createCommand(s), nil
+		},
+	)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// nodeCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// nodeCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	for cmd, _ := range cmds.Iterator() {
+		rootCmd.AddCommand(cmd)
+	}
 }

@@ -43,6 +43,11 @@ func All() seq.Seq[Binary] {
 	return seq.From(binaries)
 }
 
+// returns the binary with the given identifier.
+// if the binary is not found, an error is returned.
+//
+// possible errors:
+// - ErrBinaryNotFound
 func Get(identifier string) (Binary, error) {
 	defer logging.Fn("binaries.Get")()
 
