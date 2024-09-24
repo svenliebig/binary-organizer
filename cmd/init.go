@@ -11,6 +11,7 @@ import (
 	"github.com/svenliebig/binary-organizer/internal/boo"
 	"github.com/svenliebig/binary-organizer/internal/logging"
 	"github.com/svenliebig/binary-organizer/internal/service"
+	"github.com/svenliebig/binary-organizer/internal/shell"
 )
 
 // initCmd represents the init command
@@ -31,6 +32,7 @@ to set up your $PATH variable.`,
 		boo.Intro("is initializing the default versions of your binaries...📦")
 
 		binarySeq := binaries.All()
+		p := shell.NewPath()
 
 		for b, _ := range binarySeq.Iterator() {
 			s, err := service.New(b)
@@ -51,7 +53,7 @@ to set up your $PATH variable.`,
 				}
 			}
 
-			err = s.SetVersion(v)
+			err = s.SetVersion(v, p)
 
 			if err != nil {
 				if errors.Is(err, boo.ErrVersionNotInstalled) {
@@ -62,6 +64,12 @@ to set up your $PATH variable.`,
 			} else {
 				boo.Bodyf("  ✏️ using %s in version %s", b.Identifier(), v.String())
 			}
+		}
+
+		err := shell.WritePath(p)
+
+		if err != nil {
+			return err
 		}
 
 		boo.Outro("has setup your environment 🎉\n\nTip: to supress this message, you can use the --silent (or -s) flag like this: \n\n  boo init -s")

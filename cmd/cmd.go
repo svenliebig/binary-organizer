@@ -57,13 +57,19 @@ func createCommand(identifier string) *cobra.Command {
 
 			fmt.Printf("\n👻 bo(o) is trying to select %s v%s for you 💪\n\n", binary.Identifier(), version.String())
 
-			err = s.SetVersion(version)
+			p := shell.NewPath()
+			err = s.SetVersion(version, p)
 
 			if errors.Is(err, boo.ErrVersionNotInstalled) {
 				fmt.Printf("😨 %s v%s is not installed yet. Try the command 'boo %s list' to list all available versions of the binary.\n\n", binary.Identifier(), version.String(), binary.Identifier())
-
 				return err
 			}
+
+			if err != nil {
+				return fmt.Errorf("could not set version: %w", err)
+			}
+
+			err = shell.WritePath(p)
 
 			if err != nil {
 				return fmt.Errorf("could not write path: %w", err)

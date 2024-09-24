@@ -27,7 +27,13 @@ fi
 EXIT_CODE=$?
 
 if [ $EXIT_CODE -eq 20 ]; then
+	if [ -f "$SCRIPTPATH/.path" ]; then
 	. "$SCRIPTPATH/.path"
+	fi
+
+	if [ -f "$SCRIPTPATH/.env" ]; then
+	. "$SCRIPTPATH/.env"
+	fi
 elif [ $EXIT_CODE -eq 21 ]; then
 	# Special Handlers maybe
 else

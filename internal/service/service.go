@@ -5,6 +5,8 @@ import (
 	"io/fs"
 	"os"
 	"path"
+	"path/filepath"
+	"strings"
 
 	"github.com/svenliebig/binary-organizer/internal/binaries"
 	"github.com/svenliebig/binary-organizer/internal/boo"
@@ -117,7 +119,7 @@ func (s *service) getBinPath(v binaries.Version) (string, error) {
 
 // returns the default version of the binary that was passed to the service.
 // the default version is read from the configuration file.
-// 
+//
 // possible errors:
 //   - boo.ErrNoDefaultVersion
 func (s *service) GetDefaultVersion() (binaries.Version, error) {
@@ -141,7 +143,8 @@ func (s *service) GetDefaultVersion() (binaries.Version, error) {
 	return v, nil
 }
 
-// sets a version of the configured binary in the PATH variable.
+// adds a version of the configured binary to the given shell.Path parameter and removes
+// all other versions of the binary from the path.
 //
 // first it will check if the version is instelled, if not, it will
 // return a boo.ErrVersionNotInstalled error.
@@ -150,7 +153,7 @@ func (s *service) GetDefaultVersion() (binaries.Version, error) {
 //   - boo.ErrVersionNotInstalled
 //   - boo.ErrBinaryDirNotExists
 //   - boo.ErrBinaryDirIsFile
-func (s *service) SetVersion(version binaries.Version) error {
+func (s *service) SetVersion(version binaries.Version, p shell.Path) error {
 	defer logging.Fn("service.SetVersion")()
 
 	binp, err := s.getBinPath(version)
@@ -158,8 +161,6 @@ func (s *service) SetVersion(version binaries.Version) error {
 	if err != nil {
 		return err
 	}
-
-	p := shell.NewPath()
 
 	// remove versions from path
 	for _, pth := range p.Find(func(p string) bool {
@@ -171,5 +172,16 @@ func (s *service) SetVersion(version binaries.Version) error {
 
 	p.Add(binp)
 
-	return shell.WritePath(p)
+	if s.binary.Identifier() == "java" {
+		var home string
+		if strings.HasSuffix(binp, "Contents/Home/bin") {
+			home = filepath.Join(binp, "..", "..", "..")
+		} else {
+			home = filepath.Join(binp, "..")
+		}
+
+		return shell.WriteEnv("JAVA_HOME", home)
+	}
+
+	return nil
 }

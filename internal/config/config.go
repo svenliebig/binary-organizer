@@ -22,6 +22,7 @@ func init() {
 	viper.SetDefault("path", path.Join(home, "workspace", "software"))
 	viper.SetDefault("defaults.node", "unset")
 	viper.SetDefault("defaults.maven", "unset")
+	viper.SetDefault("defaults.java", "unset")
 }
 
 type Config struct {

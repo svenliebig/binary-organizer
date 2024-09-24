@@ -55,6 +55,11 @@ func Error(args ...any) {
 	logStack()
 }
 
+// Errorf logs a message at the error severity level.
+func Errorf(format string, args ...any) {
+	Error(fmt.Sprintf(format, args...))
+}
+
 // Fn logs the entry and exit of a function with the given name.
 // the logging is done at the trace severity level.
 //

@@ -41,7 +41,7 @@ func (p *paths) seq() seq.Seq[string] {
 }
 
 func (p *paths) add(path string) {
-	p.value = append(p.value, path)
+	p.value = append([]string{path}, p.value...)
 }
 
 func (p *paths) remove(path string) {
