@@ -75,10 +75,10 @@ func Errorf(format string, args ...any) {
 //	[TRACE] entering foo
 //	[TRACE] exiting foo
 func Fn(name string) func() {
-	Trace("enter ", name)
+	Trace("enter", name)
 	stack = append(stack, name)
 	return func() {
-		Trace("leave ", name)
+		Trace("leave", name)
 		stack = stack[:len(stack)-1]
 	}
 }
