@@ -10,6 +10,7 @@ SCRIPTPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 
 # check if ./boo exists
 if [ -f "$SCRIPTPATH/$EXECUTABLE" ]; then
+	:
 else
 	# change directory to use the go.mod
 	cd $SCRIPTPATH
