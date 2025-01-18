@@ -12,6 +12,7 @@ import (
 func init() {
 	viper.SetConfigName("boo")
 	viper.SetConfigType("toml")
+	viper.AddConfigPath("$HOME/.config/boo")
 	viper.AddConfigPath("$HOME/.config")
 
 	home, err := os.UserHomeDir()
@@ -38,12 +39,13 @@ type Config struct {
 //   - boo.ErrNoDefaultVersion
 func (c Config) DefaultVersion(identifier string) (string, error) {
 	defer logging.Fn("config.DefaultVersion")()
+	v, ok := c.Defaults[identifier]
 
-	if v, ok := c.Defaults[identifier]; ok {
-		return v, nil
+	if !ok || v == "unset" {
+		return "", boo.ErrNoDefaultVersion
 	}
 
-	return "", boo.ErrNoDefaultVersion
+	return v, nil
 }
 
 func Create() (*Config, error) {
