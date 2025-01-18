@@ -34,7 +34,7 @@ to set up your $PATH variable.`,
 		binarySeq := binaries.All()
 		p := shell.NewPath()
 
-		for b, _ := range binarySeq.Iterator() {
+		for b := range binarySeq.Iterator() {
 			s, err := service.New(b)
 
 			if err != nil {
